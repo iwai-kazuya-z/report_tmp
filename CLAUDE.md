@@ -29,7 +29,11 @@ Dorapita GCPインフラとアプリケーション構造の調査ドキュメ�
 ├── business_context/          # ビジネスコンテキスト（企業情報、M&A、市場環境）
 │   ├── awesome_gigexn_aquisition.md
 │   └── gigexn_biz.md
+├── agenda/                    # 1on1アジェンダ
+│   └── MTsan_1on1_*.md        # 松本さんとの1on1アジェンダ
+├── book_reading/              # 技術書籍の読書メモ
 ├── dorapita_code/             # アプリケーションコード（submodule: ZIGExN/dorapita）
+├── gemini_tips.md             # Gemini CLI 実践ガイド
 ├── about_*.md                 # (gitignore) 社内情報メモ
 ├── CLAUDE.md
 └── README.md                  # ドキュメントガイド
