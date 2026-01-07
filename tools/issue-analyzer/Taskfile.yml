@@ -1,0 +1,80 @@
+version: '3'
+
+vars:
+  BINARY: issue-analyzer
+  BINARY_DIR: bin
+  CGO_ENABLED: 1
+
+tasks:
+  build:
+    desc: ビルド（現在のプラットフォーム）
+    cmds:
+      - CGO_ENABLED={{.CGO_ENABLED}} go build -o {{.BINARY_DIR}}/{{.BINARY}} ./cmd/issue-analyzer
+
+  clean:
+    desc: ビルド成果物削除
+    cmds:
+      - rm -rf {{.BINARY_DIR}}
+      - rm -f coverage.out coverage.html
+
+  test:
+    desc: テスト実行
+    cmds:
+      - CGO_ENABLED={{.CGO_ENABLED}} go test -v ./...
+
+  test-coverage:
+    desc: カバレッジ付きテスト
+    cmds:
+      - CGO_ENABLED={{.CGO_ENABLED}} go test -v -coverprofile=coverage.out ./...
+      - go tool cover -html=coverage.out -o coverage.html
+      - echo "カバレッジレポート: coverage.html"
+
+  check:
+    desc: 全品質チェック
+    cmds:
+      - task: fmt
+      - task: vet
+      - task: staticcheck
+      - task: lint
+      - task: test
+
+  fmt:
+    desc: go fmt実行
+    cmds:
+      - go fmt ./...
+
+  fix:
+    desc: goimports + go fmt（import整理）
+    cmds:
+      - goimports -w .
+      - go fmt ./...
+
+  vet:
+    desc: go vet実行
+    cmds:
+      - go vet ./...
+
+  staticcheck:
+    desc: staticcheck実行
+    cmds:
+      - staticcheck ./...
+
+  lint:
+    desc: golangci-lint実行
+    cmds:
+      - golangci-lint run
+
+  lint-fix:
+    desc: golangci-lint自動修正
+    cmds:
+      - golangci-lint run --fix
+
+  run-fetch:
+    desc: issue取得（開発用）
+    cmds:
+      - CGO_ENABLED={{.CGO_ENABLED}} go run ./cmd/issue-analyzer fetch --repo ZIGExN/dorapita --days 365 --cache ./data/issues.db
+
+  run-analyze:
+    desc: 分析実行（開発用）
+    cmds:
+      - CGO_ENABLED={{.CGO_ENABLED}} go run ./cmd/issue-analyzer analyze --cache ./data/issues.db --output ./out/report.md
